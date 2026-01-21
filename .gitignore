@@ -1,0 +1,20 @@
+# Maven
+target/
+pom.properties
+.mvn/
+!**/src/main/**/target/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Java
+*.class

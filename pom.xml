@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>br.edu.ifba.inf008</groupId>
+    <artifactId>vehicle-rental-system</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>kernel</module>
+        <module>app</module>
+
+        <module>plugins/report-fuel</module>
+        <module>plugins/report-rentals</module>
+
+        <module>plugins/vehicle-economy</module>
+        <module>plugins/vehicle-compact</module>
+        <module>plugins/vehicle-suv</module>
+        <module>plugins/vehicle-luxury</module>
+        <module>plugins/vehicle-van</module>
+        <module>plugins/vehicle-electric</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>
+
