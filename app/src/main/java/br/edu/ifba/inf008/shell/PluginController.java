@@ -11,37 +11,47 @@ import java.net.URLClassLoader;
 
 public class PluginController implements IPluginController
 {
+    @Override
     public boolean init() {
         try {
             File currentDir = new File("./plugins");
 
-            // Define a FilenameFilter to include only .jar files
-            FilenameFilter jarFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().endsWith(".jar");
-                }
-            };
+            // Tenta carregar plugins dinamicamente
+            FilenameFilter jarFilter = (dir, name) -> name.toLowerCase().endsWith(".jar");
+            String[] plugins = currentDir.list(jarFilter);
 
-            String []plugins = currentDir.list(jarFilter);
-            int i;
-            URL[] jars = new URL[plugins.length];
-            for (i = 0; i < plugins.length; i++)
-            {
-                jars[i] = (new File("./plugins/" + plugins[i])).toURL();
+            // Fallback: nenhum plugin encontrado
+            if (plugins == null || plugins.length == 0) {
+                System.out.println("Nenhum plugin encontrado via loader. Carregando plugin padrão.");
+
+                Class<?> clazz = Class.forName("br.edu.ifba.inf008.plugins.Economy");
+                IPlugin economy = (IPlugin) clazz.getDeclaredConstructor().newInstance();
+                economy.init();
+
+                return true;
             }
+
+            // Loader dinâmico (mantido, mas não crítico agora)
+            URL[] jars = new URL[plugins.length];
+            for (int i = 0; i < plugins.length; i++) {
+                jars[i] = new File("./plugins/" + plugins[i]).toURI().toURL();
+            }
+
             URLClassLoader ulc = new URLClassLoader(jars, App.class.getClassLoader());
-            for (i = 0; i < plugins.length; i++)
-            {
-                String pluginName = plugins[i].split("\\.")[0];
-                IPlugin plugin = (IPlugin) Class.forName("br.edu.ifba.inf008.plugins." + pluginName, true, ulc).newInstance();
-                plugin.init();
+            for (String plugin : plugins) {
+                String pluginName = plugin.split("\\.")[0];
+                IPlugin instance = (IPlugin) Class
+                        .forName("br.edu.ifba.inf008.plugins." + pluginName, true, ulc)
+                        .getDeclaredConstructor()
+                        .newInstance();
+
+                instance.init();
             }
 
             return true;
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getClass().getName() + " - " + e.getMessage());
 
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
