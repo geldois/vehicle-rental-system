@@ -4,15 +4,14 @@ import br.edu.ifba.inf008.interfaces.IPlugin;
 import br.edu.ifba.inf008.interfaces.ICore;
 import br.edu.ifba.inf008.interfaces.domain.IVehicleTypeRegistry;
 
-public class Van implements IPlugin {
+public class ElectricPlugin implements IPlugin {
 
     @Override
     public boolean init() {
         IVehicleTypeRegistry registry = ICore.getInstance().getVehicleTypeRegistry();
 
-        registry.register(new VanVehicleType());
-
+        registry.register(new ElectricVehicleType());
+        
         return true;
     }
-
 }

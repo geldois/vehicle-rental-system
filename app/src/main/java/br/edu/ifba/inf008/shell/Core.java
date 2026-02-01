@@ -1,10 +1,11 @@
 package br.edu.ifba.inf008.shell;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+
 import br.edu.ifba.inf008.app.VehicleTypeRegistry;
 import br.edu.ifba.inf008.interfaces.*;
 import br.edu.ifba.inf008.interfaces.domain.IVehicleTypeRegistry;
-import javafx.application.Application;
-import javafx.application.Platform;
 
 public class Core extends ICore
 {
@@ -23,14 +24,15 @@ public class Core extends ICore
 
     return true;
     }
+    
     /*
 	instance = new Core();
         UIController.launch(UIController.class);
 
         return true;
     }
-
     */
+
     public IUIController getUIController() {
         return UIController.getInstance();
     }
@@ -48,8 +50,7 @@ public class Core extends ICore
     private IIOController ioController = new IOController();
     private IPluginController pluginController = new PluginController();
 
-    // Alterações
-
+    // CHANGES
     private IVehicleTypeRegistry vehicleTypeRegistry = VehicleTypeRegistry.getInstance();
 
     @Override
@@ -57,7 +58,7 @@ public class Core extends ICore
         return vehicleTypeRegistry;
     }
 
-    // alt
+    // ALT
     public static void main(String[] args) {
         Core.init();
     }

@@ -4,7 +4,7 @@ import br.edu.ifba.inf008.interfaces.IPlugin;
 import br.edu.ifba.inf008.interfaces.ICore;
 import br.edu.ifba.inf008.interfaces.domain.IVehicleTypeRegistry;
 
-public class Compact implements IPlugin {
+public class CompactPlugin implements IPlugin {
 
     @Override
     public boolean init() {

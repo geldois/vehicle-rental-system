@@ -4,13 +4,13 @@ import br.edu.ifba.inf008.interfaces.IPlugin;
 import br.edu.ifba.inf008.interfaces.ICore;
 import br.edu.ifba.inf008.interfaces.domain.IVehicleTypeRegistry;
 
-public class Luxury implements IPlugin {
+public class VanPlugin implements IPlugin {
 
     @Override
     public boolean init() {
         IVehicleTypeRegistry registry = ICore.getInstance().getVehicleTypeRegistry();
 
-        registry.register(new LuxuryVehicleType());
+        registry.register(new VanVehicleType());
 
         return true;
     }

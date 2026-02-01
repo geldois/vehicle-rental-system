@@ -1,10 +1,10 @@
 package br.edu.ifba.inf008.plugins;
 
-import br.edu.ifba.inf008.interfaces.domain.IVehicleType;
 import java.util.Map;
 
-public class CompactVehicleType implements IVehicleType {
+import br.edu.ifba.inf008.interfaces.domain.IVehicleType;
 
+public class CompactVehicleType implements IVehicleType {
     private Map<String, Double> additionalFees;
 
     @Override
@@ -22,12 +22,13 @@ public class CompactVehicleType implements IVehicleType {
         double total = dailyRate * rentalDays;
 
         if (additionalFees != null) {
-            for (Map.Entry<String, Double> e : additionalFees.entrySet()) {
-                if (e.getKey().endsWith("_fee")) {
-                    total += e.getValue();
+            for (Map.Entry<String, Double> entry : additionalFees.entrySet()) {
+                if (entry.getKey().endsWith("_fee")) {
+                    total += entry.getValue();
                 }
             }
         }
+        
         return total;
     }
 }

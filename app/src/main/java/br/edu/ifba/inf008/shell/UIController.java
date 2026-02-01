@@ -1,9 +1,5 @@
 package br.edu.ifba.inf008.shell;
 
-import br.edu.ifba.inf008.interfaces.IUIController;
-import br.edu.ifba.inf008.interfaces.ICore;
-import br.edu.ifba.inf008.shell.PluginController;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
@@ -17,8 +13,11 @@ import javafx.scene.control.Tab;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 
-public class UIController extends Application implements IUIController
-{
+import br.edu.ifba.inf008.interfaces.IUIController;
+import br.edu.ifba.inf008.interfaces.ICore;
+import br.edu.ifba.inf008.shell.PluginController;
+
+public class UIController extends Application implements IUIController {
     private ICore core;
     private MenuBar menuBar;
     private TabPane tabPane;
@@ -58,20 +57,20 @@ public class UIController extends Application implements IUIController
     }
 
     public MenuItem createMenuItem(String menuText, String menuItemText) {
-        // Criar o menu caso ele nao exista
         Menu newMenu = null;
+        
         for (Menu menu : menuBar.getMenus()) {
             if (menu.getText() == menuText) {
                 newMenu = menu;
                 break;
             }
         }
+        
         if (newMenu == null) {
             newMenu = new Menu(menuText);
             menuBar.getMenus().add(newMenu);
         }
 
-        // Criar o menu item neste menu
         MenuItem menuItem = new MenuItem(menuItemText);
         newMenu.getItems().add(menuItem);
 

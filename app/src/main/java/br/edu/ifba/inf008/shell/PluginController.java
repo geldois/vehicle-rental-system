@@ -1,57 +1,73 @@
 package br.edu.ifba.inf008.shell;
 
-import br.edu.ifba.inf008.App;
-import br.edu.ifba.inf008.interfaces.IPluginController;
-import br.edu.ifba.inf008.interfaces.IPlugin;
-import br.edu.ifba.inf008.interfaces.ICore;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class PluginController implements IPluginController
-{
+import br.edu.ifba.inf008.App;
+import br.edu.ifba.inf008.interfaces.IPluginController;
+import br.edu.ifba.inf008.interfaces.IPlugin;
+import br.edu.ifba.inf008.interfaces.ICore;
+
+public class PluginController implements IPluginController {
+    
     @Override
     public boolean init() {
         try {
-            File currentDir = new File("./plugins");
+            File pluginsDir = new File("./plugins");
 
-            // Tenta carregar plugins dinamicamente
-            FilenameFilter jarFilter = (dir, name) -> name.toLowerCase().endsWith(".jar");
-            String[] plugins = currentDir.list(jarFilter);
-
-            // Fallback: nenhum plugin encontrado
-            if (plugins == null || plugins.length == 0) {
-                System.out.println("Nenhum plugin encontrado via loader. Carregando plugin padrão.");
-
-                Class<?> clazz = Class.forName("br.edu.ifba.inf008.plugins.Economy");
-                IPlugin economy = (IPlugin) clazz.getDeclaredConstructor().newInstance();
-                economy.init();
-
+            if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
+                System.out.println("Diretório ./plugins não encontrado.");
                 return true;
             }
 
-            // Loader dinâmico (mantido, mas não crítico agora)
-            URL[] jars = new URL[plugins.length];
-            for (int i = 0; i < plugins.length; i++) {
-                jars[i] = new File("./plugins/" + plugins[i]).toURI().toURL();
+            File[] jars = pluginsDir.listFiles((dir, name) -> name.endsWith(".jar"));
+
+            if (jars == null || jars.length == 0) {
+                System.out.println("Nenhum plugin encontrado.");
+                
+                return true;
             }
 
-            URLClassLoader ulc = new URLClassLoader(jars, App.class.getClassLoader());
-            for (String plugin : plugins) {
-                String pluginName = plugin.split("\\.")[0];
-                IPlugin instance = (IPlugin) Class
-                        .forName("br.edu.ifba.inf008.plugins." + pluginName, true, ulc)
-                        .getDeclaredConstructor()
-                        .newInstance();
+            for (File jar : jars) {
+                URL jarUrl = jar.toURI().toURL();
+                URLClassLoader loader = new URLClassLoader(
+                        new URL[]{jarUrl},
+                        App.class.getClassLoader()
+                );
 
-                instance.init();
+                try (java.util.jar.JarFile jarFile = new java.util.jar.JarFile(jar)) {
+                    jarFile.stream()
+                            .filter(e -> e.getName().endsWith(".class"))
+                            .forEach(entry -> {
+                                try {
+                                    String className = entry.getName()
+                                            .replace("/", ".")
+                                            .replace(".class", "");
+
+                                    Class<?> _class = Class.forName(className, true, loader);
+
+                                    if (IPlugin.class.isAssignableFrom(_class)) {
+                                        IPlugin plugin = (IPlugin) _class
+                                                .getDeclaredConstructor()
+                                                .newInstance();
+
+                                        plugin.init();
+                                        System.out.println("Plugin carregado: " + _class.getName());
+                                    }
+
+                                } catch (Exception ignored) {
+                                }
+                            });
+                }
             }
 
             return true;
 
         } catch (Exception e) {
             e.printStackTrace();
+            
             return false;
         }
     }

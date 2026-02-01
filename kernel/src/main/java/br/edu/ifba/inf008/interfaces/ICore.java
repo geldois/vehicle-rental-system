@@ -9,13 +9,15 @@ public abstract class ICore
     }
 
     public abstract IUIController getUIController();
+    
     public abstract IAuthenticationController getAuthenticationController();
+    
     public abstract IIOController getIOController();
+    
     public abstract IPluginController getPluginController();
 
-    // Alterações
-    public abstract IVehicleTypeRegistry getVehicleTypeRegistry();
-
-
+    // CHANGES
     protected static ICore instance = null;
+
+    public abstract IVehicleTypeRegistry getVehicleTypeRegistry();
 }
