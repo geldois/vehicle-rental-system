@@ -44,7 +44,7 @@ public class UIController extends Application implements IUIController {
         VBox vBox = new VBox(menuBar);
 
         tabPane = new TabPane();
-        tabPane.setSide(Side.BOTTOM);
+        tabPane.setSide(Side.TOP);
 
         vBox.getChildren().addAll(tabPane);
 

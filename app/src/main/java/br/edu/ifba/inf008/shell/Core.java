@@ -18,7 +18,6 @@ public class Core extends ICore
 	}
 
     instance = new Core();
-    instance.getPluginController().init();
 
     UIController.launch(UIController.class);
 
