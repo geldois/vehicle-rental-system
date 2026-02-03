@@ -8,7 +8,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
+import br.edu.ifba.inf008.db.DatabaseConnection;
 import br.edu.ifba.inf008.interfaces.IPlugin;
 import br.edu.ifba.inf008.interfaces.ICore;
 import br.edu.ifba.inf008.interfaces.IUIController;
@@ -28,41 +34,57 @@ public class ReportRentalsPlugin implements IPlugin {
 
         TableView<RentalRow> table = new TableView<>();
 
-        TableColumn<RentalRow, String> clientCol =
-                new TableColumn<>("Client");
-        clientCol.setCellValueFactory(
-                new PropertyValueFactory<>("client")
-        );
+        TableColumn<RentalRow, String> customerCol = new TableColumn<>("Customer (Name / Email)");
+		customerCol.setCellValueFactory(new PropertyValueFactory<>("customerName"));
 
-        TableColumn<RentalRow, String> vehicleCol =
-                new TableColumn<>("Vehicle");
-        vehicleCol.setCellValueFactory(
-                new PropertyValueFactory<>("vehicle")
-        );
+		TableColumn<RentalRow, String> vehicleCol = new TableColumn<>("Vehicle");
+		vehicleCol.setCellValueFactory(new PropertyValueFactory<>("vehicle"));
 
-        TableColumn<RentalRow, String> startCol =
-                new TableColumn<>("Start Date");
-        startCol.setCellValueFactory(
-                new PropertyValueFactory<>("startDate")
-        );
+		TableColumn<RentalRow, String> startCol = new TableColumn<>("Start Date");
+		startCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
 
-        TableColumn<RentalRow, String> endCol =
-                new TableColumn<>("End Date");
-        endCol.setCellValueFactory(
-                new PropertyValueFactory<>("endDate")
-        );
+		TableColumn<RentalRow, Double> totalCol = new TableColumn<>("Total");
+		totalCol.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
 
-        TableColumn<RentalRow, Double> totalCol =
-                new TableColumn<>("Total");
-        totalCol.setCellValueFactory(
-                new PropertyValueFactory<>("total")
-        );
+		TableColumn<RentalRow, String> rentalStatusCol = new TableColumn<>("Rental Status");
+		rentalStatusCol.setCellValueFactory(new PropertyValueFactory<>("rentalStatus"));
 
-        table.getColumns().addAll(
-                clientCol, vehicleCol, startCol, endCol, totalCol
-        );
+		TableColumn<RentalRow, String> paymentStatusCol = new TableColumn<>("Payment Status");
+		paymentStatusCol.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
 
-        table.setItems(mockData());
+		table.getColumns().addAll(
+			customerCol,
+			vehicleCol,
+			startCol,
+			totalCol,
+			rentalStatusCol,
+			paymentStatusCol
+		);
+
+        ObservableList<RentalRow> data = FXCollections.observableArrayList();
+
+		try (
+			Connection conn = DatabaseConnection.getConnection();
+			PreparedStatement stmt = conn.prepareStatement(
+				loadSQL("/sql/report2.sql")
+			);
+			ResultSet rs = stmt.executeQuery()
+		) {
+			while (rs.next()) {
+				data.add(new RentalRow(
+					rs.getString("customer_display"),
+					rs.getString("vehicle"),
+					rs.getString("start_date"),
+					rs.getDouble("total_amount"),
+					rs.getString("rental_status"),
+					rs.getString("payment_status")
+				));
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+
+		table.setItems(data);
 
         VBox root = new VBox(10);
         root.getChildren().addAll(title, table);
@@ -70,48 +92,45 @@ public class ReportRentalsPlugin implements IPlugin {
         ui.createTab("Rentals Report", root);
     }
 
-    private ObservableList<RentalRow> mockData() {
-        return FXCollections.observableArrayList(
-                new RentalRow("alice@email.com", "ECONOMY", "2026-01-10", "2026-01-15", 550.0),
-                new RentalRow("bob@email.com", "SUV", "2026-01-12", "2026-01-14", 780.0),
-                new RentalRow("carol@email.com", "ELECTRIC", "2026-01-20", "2026-01-25", 1200.0)
-        );
-    }
+	private String loadSQL(String path) {
+		try (InputStream is = getClass().getResourceAsStream(path)) {
+			if (is == null) {
+				throw new RuntimeException("SQL file not found: " + path);
+			}
+			return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
     public static class RentalRow {
-        private final String client;
-        private final String vehicle;
-        private final String startDate;
-        private final String endDate;
-        private final Double total;
 
-        public RentalRow(String client, String vehicle,
-                         String startDate, String endDate, Double total) {
-            this.client = client;
-            this.vehicle = vehicle;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.total = total;
-        }
+		private final String customerName;
+		private final String vehicle;
+		private final String startDate;
+		private final Double totalAmount;
+		private final String rentalStatus;
+		private final String paymentStatus;
 
-        public String getClient() {
-            return client;
-        }
+		public RentalRow(String customerName,
+						String vehicle,
+						String startDate,
+						Double totalAmount,
+						String rentalStatus,
+						String paymentStatus) {
+			this.customerName = customerName;
+			this.vehicle = vehicle;
+			this.startDate = startDate;
+			this.totalAmount = totalAmount;
+			this.rentalStatus = rentalStatus;
+			this.paymentStatus = paymentStatus;
+		}
 
-        public String getVehicle() {
-            return vehicle;
-        }
-
-        public String getStartDate() {
-            return startDate;
-        }
-
-        public String getEndDate() {
-            return endDate;
-        }
-
-        public Double getTotal() {
-            return total;
-        }
-    }
+		public String getCustomerName() { return customerName; }
+		public String getVehicle() { return vehicle; }
+		public String getStartDate() { return startDate; }
+		public Double getTotalAmount() { return totalAmount; }
+		public String getRentalStatus() { return rentalStatus; }
+		public String getPaymentStatus() { return paymentStatus; }
+	}
 }
