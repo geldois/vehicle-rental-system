@@ -35,9 +35,7 @@ A arquitetura segue o padrão Microkernel, organizada da seguinte forma:
   em JavaFX.
 
 - Plug-ins:
-  Funcionalidades adicionais são implementadas como plug-ins independentes,
-  carregados dinamicamente em tempo de execução, sem necessidade de recompilar
-  o sistema principal.
+  Funcionalidades adicionais são implementadas como plug-ins independentes, carregados dinamicamente em tempo de execução, sem necessidade de recompilar o sistema principal. Os plug-ins são descobertos automaticamente em tempo de execução por meio do mecanismo padrão `ServiceLoader` do Java, garantindo modularidade sem necessidade de configuração manual.
 
 Essa abordagem permite adicionar ou remover funcionalidades de forma simples
 e organizada.
@@ -117,7 +115,7 @@ oficial do MariaDB.
 Acesse o diretório:
 
 ```bash
-docs/docker
+cd docs/docker
 ```
 
 Execute:
@@ -145,7 +143,7 @@ mvn clean install
 Após a compilação, execute a aplicação com:
 
 ```bash
-mvn -pl app exec:java
+java -jar app/target/app-1.0.0-SNAPSHOT.jar
 ```
 
 A interface gráfica será aberta em JavaFX, contendo:
@@ -159,7 +157,7 @@ A interface gráfica será aberta em JavaFX, contendo:
 
 Link do vídeo explicativo (até 5 minutos):
 
-(INSERIR LINK AQUI)
+https://youtu.be/ZM-I-PJsvic
 
 ---
 # Observações Finais
