@@ -15,6 +15,7 @@
     <artifactId>app</artifactId>
     <packaging>jar</packaging>
 
+    <!-- Plugins de veículos -->
     <dependencies>
         <dependency>
             <groupId>br.edu.ifba.inf008</groupId>
@@ -27,7 +28,82 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>vehicle-compact</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>vehicle-suv</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>vehicle-luxury</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>vehicle-van</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>vehicle-electric</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Plugins de relatório / UI -->
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>report-fuel</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>report-rentals</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.edu.ifba.inf008</groupId>
+            <artifactId>rental-ui</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
-</project>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>br.edu.ifba.inf008.App</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
+</project>
